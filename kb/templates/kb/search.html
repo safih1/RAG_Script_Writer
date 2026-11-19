@@ -1,0 +1,43 @@
+<!doctype html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>Balochistan KB</title>
+  <style>
+    body { font-family: sans-serif; max-width: 850px; margin: 2em auto; padding: 0 1em; }
+    .r { border-bottom: 1px solid #ddd; padding: .8em 0; }
+    .m { color: #666; font-size: .85em; }
+    input[name=q] { width: 60%; padding: .4em; }
+  </style>
+</head>
+<body>
+  <h2>Balochistan Knowledge Base</h2>
+  <form method="get">
+    <input name="q" value="{{ q }}" placeholder="Describe the new event">
+    <select name="district">
+      <option value="">Any district</option>
+      {% for d in districts %}
+        <option value="{{ d.name }}" {% if d.name == district %}selected{% endif %}>{{ d.name }}</option>
+      {% endfor %}
+    </select>
+    <button>Search</button>
+  </form>
+
+  {% for r in results %}
+    <div class="r">
+      <div dir="auto"><b>{{ r.doc.title }}</b></div>
+      <div class="m">
+        {{ r.doc.published|default:"no date" }} · {{ r.doc.source.name }} · tier {{ r.doc.source.tier }}
+        · {{ r.doc.doc_type }}
+        {% if r.doc.entities.all %} ·
+          {% for e in r.doc.entities.all %}{{ e.name }}{% if not forloop.last %}, {% endif %}{% endfor %}
+        {% endif %}
+      </div>
+      <div dir="auto">{{ r.snippet }}</div>
+      <div class="m">{{ r.doc.url }}</div>
+    </div>
+  {% empty %}
+    {% if q %}<p>No results.</p>{% endif %}
+  {% endfor %}
+</body>
+</html>
